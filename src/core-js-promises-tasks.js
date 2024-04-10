@@ -96,15 +96,6 @@ function getFirstPromiseResult(promises) {
   });
 }
 
-// const promise1 = Promise.resolve(1);
-// const promise2 = Promise.reject(2);
-// const promise3 = new Promise((resolve) => setTimeout(() => resolve(3), 50));
-// // const promise4 = new Promise((resolve) => setTimeout(() => resolve(4), 100));
-// // const promise5 = new Promise((resolve) => setTimeout(() => resolve(5), 150));
-// const promise6 = new Promise((reject) => setTimeout(() => reject(6), 10));
-
-// getFirstPromiseResult([promise3, promise6, promise2]);
-
 /**
  * Attempts to resolve all provided promises. If all promises resolve successfully, it returns a promise that resolves with an array of their values.
  * If any of the promises are rejected, it returns a promise that is immediately rejected with the reason of the first promise that was rejected.
@@ -116,8 +107,10 @@ function getFirstPromiseResult(promises) {
  * [Promise.resolve(1), Promise.resolve(2), Promise.resolve(3)] => Promise fulfilled with [1, 2, 3]
  * [Promise.resolve(1), Promise.reject(2), Promise.resolve(3)] => Promise rejected with 2
  */
-function getAllOrNothing(/* promises */) {
-  throw new Error('Not implemented');
+function getAllOrNothing(promises) {
+  return new Promise((resolve, reject) => {
+    Promise.all(promises).then(resolve).catch(reject);
+  });
 }
 
 /**
@@ -132,8 +125,8 @@ function getAllOrNothing(/* promises */) {
  * [Promise.resolve(1), Promise.resolve(2), Promise.resolve(3)] => Promise fulfilled with [1, 2, 3]
  * [Promise.resolve(1), Promise.reject(2), Promise.resolve(3)]  => Promise fulfilled with [1, null, 3]
  */
-function getAllResult(/* promises */) {
-  throw new Error('Not implemented');
+function getAllResult(promises) {
+  return Promise.all(promises.map((promise) => promise.catch(() => null)));
 }
 
 /**
