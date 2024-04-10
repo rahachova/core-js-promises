@@ -58,8 +58,13 @@ function getPromiseResult(source) {
  * [Promise.resolve(1), Promise.reject(2), Promise.resolve(3)]  => Promise fulfilled with 1
  * [Promise.reject(1), Promise.reject(2), Promise.reject(3)]    => Promise rejected
  */
-function getFirstResolvedPromiseResult(/* promises */) {
-  throw new Error('Not implemented');
+function getFirstResolvedPromiseResult(promises) {
+  return new Promise((resolve, reject) => {
+    promises.forEach((promise) => {
+      promise.then(resolve).catch(() => {});
+    });
+    setTimeout(() => reject(new Error('All promises were rejected')), 0);
+  });
 }
 
 /**
@@ -81,9 +86,24 @@ function getFirstResolvedPromiseResult(/* promises */) {
  * [promise3, promise6, promise2] => Promise rejected with 2
  * [promise3, promise4, promise6] => Promise rejected with 6
  */
-function getFirstPromiseResult(/* promises */) {
-  throw new Error('Not implemented');
+function getFirstPromiseResult(promises) {
+  return new Promise((resolve) => {
+    Promise.race(promises)
+      .then((value) => {
+        resolve(value);
+      })
+      .catch((value) => value);
+  });
 }
+
+// const promise1 = Promise.resolve(1);
+// const promise2 = Promise.reject(2);
+// const promise3 = new Promise((resolve) => setTimeout(() => resolve(3), 50));
+// // const promise4 = new Promise((resolve) => setTimeout(() => resolve(4), 100));
+// // const promise5 = new Promise((resolve) => setTimeout(() => resolve(5), 150));
+// const promise6 = new Promise((reject) => setTimeout(() => reject(6), 10));
+
+// getFirstPromiseResult([promise3, promise6, promise2]);
 
 /**
  * Attempts to resolve all provided promises. If all promises resolve successfully, it returns a promise that resolves with an array of their values.
